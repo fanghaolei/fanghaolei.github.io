@@ -20,19 +20,19 @@ Tip: You can search for shortcuts you want to remap by directly  typing in the p
 
 1.  As an Rstudio user, I like sending my code directly into the console to run. By default the shortcut in PyCharm is `opt + shift + E` or `ctrl + shift + E`. I switched to `cmd + enter` .  This helps data exploration a lot! Alternatively, you can also install IPython and set it up as your default console.
 
-    ![s2c](../img/send2console.png)
+    ![s2c](./img/send2console.png)
 
 2. I also want to be able to switch my tools windows quickly. So I remapped `cmd + 1`, `cmd+2` , ect., see the image below: 
 
-   ![overview](../img/tools.png)
+   ![overview](./img/tools.png)
 
-3.  Added a key to 'search everywhere', I personally set it to `opt + F`. This helps me to quickly find files and code. 
+3. Added a key to 'search everywhere', I personally set it to `opt + F`. This helps me to quickly find files and code. 
 
 ### Configuring run options.
 
 Under `Run -> Edit Configurations`, I keep my interpreter options with `-i` :
 
-![Interpreter](../img/interp.png)
+![Interpreter](./img/interp.png)
 
 This lets you have access to all your variables in the 'run'  window after running a script. You can use the run window as an interactive shell, but it's a bit cumbersome to use. 
 
@@ -40,4 +40,4 @@ This lets you have access to all your variables in the 'run'  window after runni
 
  Here is how my PyCharm looks after all these configurations, simpilified and distraction free:
 
-![final](../img/final.png)
+![final](./img/final.png)
