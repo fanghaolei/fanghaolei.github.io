@@ -26,7 +26,7 @@ And it will be coerced to any other non-NA types in the vector:
 > class(c(2, NA))
 [1] "numeric"
 ```
-You can also coerce itself it other types:
+You can also coerce itself into other types:
 
 ```R
 > class(as.numeric(NA))
@@ -35,7 +35,7 @@ You can also coerce itself it other types:
 [1] "character"
 ```
 
-This flexibility of `NA`'s type is actually very useful and convenient in data analysis, where you do not need to worry about type conversion all the time. 
+This flexibility of `NA`'s typing is actually very useful and convenient in data analysis, where you do not need to worry about type conversion all the time. 
 
 ### A potential bug with `rpy2`
 
