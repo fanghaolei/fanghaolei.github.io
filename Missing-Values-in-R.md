@@ -24,15 +24,15 @@ And it will be coerced to any other non-NA types in the vector:
 
 ```R
 > class(c(2, NA))
-[1] “numeric”
+[1] "numeric"
 ```
 You can also coerce itself it other types:
 
 ```R
 > class(as.numeric(NA))
-[1] “numeric”
+[1] "numeric"
 > class(as.character(NA))
-[1] “character”
+[1] "character"
 ```
 
 This flexibility of `NA`'s type is actually very useful and convenient in data analysis, where you do not need to worry about type conversion all the time. 
@@ -43,5 +43,7 @@ Normally, this `NA` type issue won't cause any problems; however, I found a bug 
 
 However, if the NA value is pre-converted into `numeric` or `character` type in R, the converted `pandas` DataFrame will be normal, showing as `NaN`.  
 
-This is a caveat to note when using `rpy2` to convert data frames from R. If there is a pure `NA` column, be sure to convert it to numeric or character type beforehand. Also, there is another trick: R has a constant `NA_character_` stored in global environment, which is essentially a character typed `NA`. You can simply assign the column with this constant like `df$MyNACol <- NA_character_` to replace the default logical `NA`. 
+This is a caveat to note when using `rpy2` to convert data frames from R. If there is a pure `NA` column, be sure to convert it to numeric or character type beforehand. 
+
+Also, there is another trick: R has a constant `NA_character_` stored in the global environment, which is essentially a character typed `NA`. You can simply assign the column with this constant as `df$MyNACol <- NA_character_` to replace the default logical `NA`. 
 
