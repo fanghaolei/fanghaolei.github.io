@@ -1,5 +1,8 @@
 theme: jekyll-theme-minimal
+url: https://fanghaolei.github.io/
 title: 破万里浪
+author:
+  name: Haolei (Michael) Fang 
 description: Sharing knowledge of data science and programming
 gems:
    - jekyll-mentions
