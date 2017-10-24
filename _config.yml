@@ -3,8 +3,7 @@ title: 破万里浪
 author:
   name: Haolei (Michael) Fang 
 url: https://fanghaolei.github.io/
-description: Sharing knowledge of data science and 
-permalink: /:index.html
+description: Sharing knowledge of data science and programming
 gems:
    - jekyll-mentions
    - jemoji
