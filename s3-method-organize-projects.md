@@ -21,16 +21,16 @@ create_project <- function(project_name, options){
             project_name = project_name,
             
             # Note that you can wrap all project 
-			# specific params into an options list 
+            # specific params into an options list 
             # and unpack it later in the S3 methods.
         	options = options
         ),
    
         # simply use project_name as the class, you can 
         # also assign additonal parent classes to set
-        # up an inheritance structure. This is particularly
-        # helper if you have layers of projects that 
-        # all follow one generic procedure.
+        # up an inheritance structure. This is 
+        # particularly helpful if you have layers of 
+        # projects that all follow one generic procedure.
         # E.g., class = c(project_name, "my_project")
         class = project_name
     )
@@ -101,8 +101,7 @@ process_data.project_beta <- function(obj, data){
 4. then call your wrap up your code in an execution function / script:
 
 ```R
-run_data_process <- function(project_name, project_options,
-                             project_data){
+run_data_process <- function(name, options,data){
     project <- create_project(project_name,options)
 	processed_data <- process_data(
         project, 
@@ -122,7 +121,7 @@ beta_processed <- run_data_process(
 )
 ```
 
-You can see that with the S3 methods, we have the ability to scale our core functions to many projects without worrying about human error or hidden bugs in copy & paste.  And if there's a bug in the core function, fixing in one place means all projects are also fixed. 
+You can see that with the S3 methods, we have the ability to scale our core functions to many projects without worrying about human error or hidden bugs in copy & paste.  And if there's a bug in the core function, fixing it in one place means all projects are also fixed. 
 
 
 
