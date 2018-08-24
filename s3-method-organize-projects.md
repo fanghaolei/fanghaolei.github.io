@@ -102,10 +102,10 @@ process_data.project_beta <- function(obj, data){
 
 ```R
 run_data_process <- function(name, options,data){
-    project <- create_project(project_name,options)
+    project <- create_project(name, options)
 	processed_data <- process_data(
         project, 
-        data = project_data
+        data = data
     )
     return(processed_data)
 }
