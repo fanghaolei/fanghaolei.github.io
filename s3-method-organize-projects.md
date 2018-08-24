@@ -1,6 +1,6 @@
 # Organizing Projects with S3 Methods in R 
 
-Unless you are developing your own R packages with complicated structure, object oriented coding in R is often overlooked.  Not until very recently, I found that there are actually situations other than in package development where you want use OO programming in R, or more specifically speaking using S3 methods. 
+Unless you are developing your own R packages with complicated structure, object oriented coding in R is often overlooked.  Not until very recently, I discovered that there are actually situations other than in package development where you want use OO programming in R, or more specifically speaking using S3 methods. 
 
 If you aren't familiar with S3 methods in R, here is a guide by Hadley: [OO field guide in Advanced R](http://adv-r.had.co.nz/OO-essentials.html).
 
@@ -8,9 +8,9 @@ So, let's cut into the point.
 
 One big challenge in data science is actually organizing and reusing the code across multiple projects. Imaging that you have a general data wrangling procedure that loosely applies to all your projects but with some custom variants.
 
-Obviously one way you can reuse your code is by copying and pasting functions or scripts that are relatively generic from one project to another and then refactor. This is a very quick and effective way to get your job done; however, you may get confused over time with code accumulation and get blinded by the subtle differences in each project. Also if you found a bug in one place, you have to fix it in multiple places, which is a pain. 
+Obviously one way you can reuse your code is simply by copying and pasting functions or scripts that are relatively generic from one project to another and then refactor accordingly. This is a very quick and effective way to get the job done; however, you will get confused over time with code accumulation and puzzled by the subtle differences in each project. Also if you found a bug in one place, you have to fix it in multiple places, which is quite a pain. 
 
- The S3 approach to organize a situation like this is fairly straight forward:
+ The S3 approach to handle a situation like this is fairly straight forward:
 
 1. make an s3 object that defines your project, note that an s3 object is simply list with attributes:
 
@@ -26,12 +26,14 @@ create_project <- function(project_name, options){
         	options = options
         ),
    
-        # simply use project_name as the class, you can 
-        # also assign additonal parent classes to set
-        # up an inheritance structure. This is 
-        # particularly helpful if you have layers of 
-        # projects that all follow one generic procedure.
+        # class name is simply the project_name, you 
+        # can also assign additonal parent classes to
+        # set up an inheritance structure, which is 
+        # particularly useful if you have layers of 
+        # projects that follow one generic procedure
+    
         # E.g., class = c(project_name, "my_project")
+        # all projects are also "my_project"
         class = project_name
     )
     return(project)
