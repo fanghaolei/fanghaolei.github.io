@@ -4,9 +4,9 @@ title: Welcome
 
 ## Blog articles:
 
-####[Organizing Projects with S3 Methods in R (08/24/18)](R - organize your projects with s3 methods.html)
+#### [Organizing Projects with S3 Methods in R (08/24/18)](s3-method-organize-projects.html)
 
-Unless you are developing your own R packages with complicated structure, object oriented coding in R is often overlooked.  Not until very recently, I found that there are actually situations other than in package development where you want use OO programming in R, or more specifically speaking using S3 methods.  [...more](R - organize your projects with s3 methods.html)
+Unless you are developing your own R packages with complicated structure, object oriented coding in R is often overlooked.  Not until very recently, I found that there are actually situations other than in package development where you want use OO programming in R, or more specifically speaking using S3 methods.  [...more](s3-method-organize-projects.html)
 
 #### [PyCharm Setup for Rstudio Users (05/22/17)](PyCharm-Setup-for-Rstudio-Users.html) 
 
