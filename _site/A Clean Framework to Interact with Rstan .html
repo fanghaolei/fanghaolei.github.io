@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>A Clean Framework to Interact with Rstan | 破万里浪</title>
+<meta name="generator" content="Jekyll v3.7.3" />
+<meta property="og:title" content="A Clean Framework to Interact with Rstan" />
+<meta name="author" content="Haolei (Michael) Fang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Sharing knowledge of data science and programming." />
+<meta property="og:description" content="Sharing knowledge of data science and programming." />
+<link rel="canonical" href="http://localhost:4000/A%20Clean%20Framework%20to%20Interact%20with%20Rstan%20.html" />
+<meta property="og:url" content="http://localhost:4000/A%20Clean%20Framework%20to%20Interact%20with%20Rstan%20.html" />
+<meta property="og:site_name" content="破万里浪" />
+<script type="application/ld+json">
+{"description":"Sharing knowledge of data science and programming.","author":{"@type":"Person","name":"Haolei (Michael) Fang"},"@type":"WebPage","url":"http://localhost:4000/A%20Clean%20Framework%20to%20Interact%20with%20Rstan%20.html","headline":"A Clean Framework to Interact with Rstan","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=667bde2359fb4e76028adfcb8d3490b20b06a789">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <a href="http://github.com/pages/fanghaolei/fanghaolei.github.io"> <h1>破万里浪</h1> </a>
+        <p>Sharing knowledge of data science and programming.</p>
+
+        
+          <p class="view"><a href="http://github.com/fanghaolei/fanghaolei.github.io">View the Project on GitHub <small></small></a></p>
+        
+
+        
+
+        
+      </header>
+      <section>
+
+      <h1 id="a-clean-framework-to-interact-with-rstan">A Clean Framework to Interact with Rstan</h1>
+
+<p><a href="http://mc-stan.org/">Stan</a> is a fantastic language for statistical computing with its extraordinary ability in performing probabilistic modeling and bayesian data analysis</p>
+
+<p>Here I want to talk about a clean way I discovered to interact with stan, essentially, the way to build a clean, easy-to-use framework to avoid code duplication and reuse your code as much as possible. Even though the title says Rstan, but I think the general structure applies to Pystan as well since they share a pretty similar API.</p>
+
+<h2 id="1-where-to-store-the-stan-code">1. Where to store the stan code?</h2>
+
+<p>This is the straight-up problem we are facing. Where to put all our fancy stan model code? Since raw stan code needs to be compiled to run, we definitely want to avoid the time consuming re-compiling process. Depending on whether you want to put all your code into an R package, this can be achieved in two different ways.</p>
+
+<ol>
+  <li>
+    <p>The project is in a single repo or too small to require a full-blown package.</p>
+
+    <p>In this scenario, you want put all your <code class="highlighter-rouge">.stan</code> code into one dedicated directory, when your model runs, the compiled binaries will be saved in the same directory. Of course you will need a function to save the binaries as <code class="highlighter-rouge">.rds</code> files, I will talk about that in the following section.</p>
+  </li>
+  <li>
+    <p>The project has a relative large code base.</p>
+
+    <p>Now you should be considering a package. Having a stand-out package repo is very helpful in separating modeling code and other helpers you created for processing or exploring data. From my experience, the core modeling code will need far less maintenance or be much easier to maintain once your model is mature. In this case, it’s cleaner to store all <code class="highlighter-rouge">.stan</code> code under an <code class="highlighter-rouge">inst/</code> directory in the package repo. Similarly this requires a few helpers to optimize the workflow.</p>
+  </li>
+</ol>
+
+<h2 id="2-build-around-the-stan-api---stan-helpers">2. Build around the stan API - Stan helpers.</h2>
+
+<p>From reading stan’s API manual, we can see that the ultimate function we call is <code class="highlighter-rouge">sampling()</code>, and the key arguments are:</p>
+
+<ol>
+  <li>object: a compiled stan model.</li>
+  <li>data: a named list (dict in python) providing all input specified in your stan model</li>
+  <li>pars: parameters to keep in the stan fit</li>
+  <li>chains, iter, warmup, thin, seed: these are all core options for the sampler</li>
+  <li>algorithms: the sampling method, I think most of the case we use ‘NUTS’</li>
+</ol>
+
+<p>So, what we need are pretty obvious.</p>
+
+<ol>
+  <li>
+    <p>A pre-compiled model. The <code class="highlighter-rouge">stan_model()</code> function in <code class="highlighter-rouge">rstan</code> package does exactly that. However, we also want to be able to reuse our compiled binaries, so we need a wrapper to <code class="highlighter-rouge">stan_model</code>, something like this:</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>compile_save_model &lt;- function(stan_code) {
+    binary &lt;- stan_model(stan_code)
+    saveRDS(binary, binary_file_dir)
+}
+</code></pre></div>    </div>
+
+    <p>to not only compile but also save the binary into a <code class="highlighter-rouge">.rds</code> or <code class="highlighter-rouge">.RData</code> file. In python, this can be a <code class="highlighter-rouge">.pkl</code> file. We also need a <code class="highlighter-rouge">load_compiled_model()</code> helper to load the saved binary. In R this can be a simple wrapper to <code class="highlighter-rouge">readRDS()</code> or <code class="highlighter-rouge">read()</code> with your file directory.</p>
+  </li>
+  <li>
+    <p>A data list. We need a helper function</p>
+  </li>
+  <li>
+    <p>A model option list.</p>
+  </li>
+  <li>
+    <p>A wrapper</p>
+  </li>
+</ol>
+
+<h2 id="3-a-object-oriented-model-class-design">3. A Object Oriented Model Class Design.</h2>
+
+
+
+      </section>
+      <footer>
+        
+        <p>This project is maintained by <a href="http://github.com/fanghaolei">fanghaolei</a></p>
+        
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="/assets/js/scale.fix.js"></script>
+
+
+  
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-108549416-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+  
+  </body>
+</html>

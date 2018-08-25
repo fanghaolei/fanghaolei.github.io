@@ -22,6 +22,8 @@ Tip: You can search for shortcuts you want to remap by directly  typing in the p
 
 3. Added a key to 'search everywhere', I personally set it to `opt + F`. This helps me to quickly find files and code. 
 
+4. I also added a shortcut key to clear my console ("clear all" in the settings page) with `ctrl + L`. However, you need to click on the content in the console in order to clear the screen. 
+
 ### Configuring run options.
 
 Under `Run -> Edit Configurations`, I keep my interpreter options with `-i` :

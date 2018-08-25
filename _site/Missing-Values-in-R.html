@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Missing Values in R | 破万里浪</title>
+<meta name="generator" content="Jekyll v3.7.3" />
+<meta property="og:title" content="Missing Values in R" />
+<meta name="author" content="Haolei (Michael) Fang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Sharing knowledge of data science and programming." />
+<meta property="og:description" content="Sharing knowledge of data science and programming." />
+<link rel="canonical" href="http://localhost:4000/Missing-Values-in-R.html" />
+<meta property="og:url" content="http://localhost:4000/Missing-Values-in-R.html" />
+<meta property="og:site_name" content="破万里浪" />
+<script type="application/ld+json">
+{"description":"Sharing knowledge of data science and programming.","author":{"@type":"Person","name":"Haolei (Michael) Fang"},"@type":"WebPage","url":"http://localhost:4000/Missing-Values-in-R.html","headline":"Missing Values in R","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=667bde2359fb4e76028adfcb8d3490b20b06a789">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <a href="http://github.com/pages/fanghaolei/fanghaolei.github.io"> <h1>破万里浪</h1> </a>
+        <p>Sharing knowledge of data science and programming.</p>
+
+        
+          <p class="view"><a href="http://github.com/fanghaolei/fanghaolei.github.io">View the Project on GitHub <small></small></a></p>
+        
+
+        
+
+        
+      </header>
+      <section>
+
+      <h1 id="missing-values-in-r">Missing Values in R</h1>
+
+<p>Something interesting I found out about <code class="highlighter-rouge">NA</code> values in R. Typically, this won’t cause any bug or undesired results in data analysis, but there are certain cases that this should be aware of, especially when using <code class="highlighter-rouge">rpy2</code> python package to call R code from a python script.</p>
+
+<h3 id="the-type-coercion">The type coercion</h3>
+
+<p>As opposed to python’s <code class="highlighter-rouge">None</code> is registered as a <code class="highlighter-rouge">None</code> type, R’s <code class="highlighter-rouge">NA</code> does not have a distinct type, and surprisingly it’s a <code class="highlighter-rouge">logical</code> type. The class is <code class="highlighter-rouge">logical</code> in a pure <code class="highlighter-rouge">NA</code> vector as well:</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="nf">class</span><span class="p">(</span><span class="kc">NA</span><span class="p">)</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s2">"logical"</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">class</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span><span class="kc">NA</span><span class="p">))</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s2">"logical"</span><span class="w">
+</span></code></pre></div></div>
+
+<p>However, this logical type is not like <code class="highlighter-rouge">TRUE</code> OR <code class="highlighter-rouge">FALSE</code>. It can’t be evaluated:</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="kc">NA</span><span class="p">)</span><span class="w"> </span><span class="n">print</span><span class="p">(</span><span class="s1">'!!!'</span><span class="p">)</span><span class="w">
+</span><span class="n">Error</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kc">NA</span><span class="p">)</span><span class="w"> </span><span class="n">print</span><span class="p">(</span><span class="s2">"!!!"</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">missing</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="n">where</span><span class="w"> </span><span class="kc">TRUE</span><span class="o">/</span><span class="kc">FALSE</span><span class="w"> </span><span class="n">needed</span><span class="w">
+</span></code></pre></div></div>
+
+<p>And it will be coerced to any other non-NA types in the vector:</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="nf">class</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="kc">NA</span><span class="p">))</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s2">"numeric"</span><span class="w">
+</span></code></pre></div></div>
+<p>You can also coerce itself into other types:</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span><span class="w"> </span><span class="nf">class</span><span class="p">(</span><span class="nf">as.numeric</span><span class="p">(</span><span class="kc">NA</span><span class="p">))</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s2">"numeric"</span><span class="w">
+</span><span class="o">&gt;</span><span class="w"> </span><span class="nf">class</span><span class="p">(</span><span class="nf">as.character</span><span class="p">(</span><span class="kc">NA</span><span class="p">))</span><span class="w">
+</span><span class="p">[</span><span class="m">1</span><span class="p">]</span><span class="w"> </span><span class="s2">"character"</span><span class="w">
+</span></code></pre></div></div>
+
+<p>This flexibility of <code class="highlighter-rouge">NA</code>’s typing is actually very useful and convenient in data analysis, where you do not need to worry about type conversion all the time.</p>
+
+<h3 id="a-potential-bug-with-rpy2">A potential bug with <code class="highlighter-rouge">rpy2</code></h3>
+
+<p>Normally, this <code class="highlighter-rouge">NA</code> type issue won’t cause any problems; however, I found a bug in using pure <code class="highlighter-rouge">NA</code> vectors with <code class="highlighter-rouge">rpy2</code> package. When I use <code class="highlighter-rouge">pandas2ri.ri2py()</code> function to convert R a data frame to a <code class="highlighter-rouge">pandas</code> DataFrame, a pure <code class="highlighter-rouge">NA</code> logical vector/column would turn into a Series of min values of type <code class="highlighter-rouge">int32</code>, which is -2147483648.</p>
+
+<p>However, if the NA value is pre-converted into <code class="highlighter-rouge">numeric</code> or <code class="highlighter-rouge">character</code> type in R, the converted <code class="highlighter-rouge">pandas</code> DataFrame will be normal, showing as <code class="highlighter-rouge">NaN</code>.</p>
+
+<p>This is a caveat to note when using <code class="highlighter-rouge">rpy2</code> to convert data frames from R. If there is a pure <code class="highlighter-rouge">NA</code> column, be sure to convert it to numeric or character type beforehand.</p>
+
+<p>Also, there is another trick: R has a constant <code class="highlighter-rouge">NA_character_</code> stored in the global environment, which is essentially a character typed <code class="highlighter-rouge">NA</code>. You can simply assign the column with this constant as <code class="highlighter-rouge">df$MyNACol &lt;- NA_character_</code> to replace the default logical <code class="highlighter-rouge">NA</code>.</p>
+
+
+
+      </section>
+      <footer>
+        
+        <p>This project is maintained by <a href="http://github.com/fanghaolei">fanghaolei</a></p>
+        
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="/assets/js/scale.fix.js"></script>
+
+
+  
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-108549416-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+  
+  </body>
+</html>

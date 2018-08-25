@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+<!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Organizing Projects with S3 Methods in R | 破万里浪</title>
+<meta name="generator" content="Jekyll v3.7.3" />
+<meta property="og:title" content="Organizing Projects with S3 Methods in R" />
+<meta name="author" content="Haolei (Michael) Fang" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Sharing knowledge of data science and programming." />
+<meta property="og:description" content="Sharing knowledge of data science and programming." />
+<link rel="canonical" href="http://localhost:4000/s3-method-organize-projects.html" />
+<meta property="og:url" content="http://localhost:4000/s3-method-organize-projects.html" />
+<meta property="og:site_name" content="破万里浪" />
+<script type="application/ld+json">
+{"description":"Sharing knowledge of data science and programming.","author":{"@type":"Person","name":"Haolei (Michael) Fang"},"@type":"WebPage","url":"http://localhost:4000/s3-method-organize-projects.html","headline":"Organizing Projects with S3 Methods in R","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=667bde2359fb4e76028adfcb8d3490b20b06a789">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <a href="http://github.com/pages/fanghaolei/fanghaolei.github.io"> <h1>破万里浪</h1> </a>
+        <p>Sharing knowledge of data science and programming.</p>
+
+        
+          <p class="view"><a href="http://github.com/fanghaolei/fanghaolei.github.io">View the Project on GitHub <small></small></a></p>
+        
+
+        
+
+        
+      </header>
+      <section>
+
+      <h1 id="organizing-projects-with-s3-methods-in-r">Organizing Projects with S3 Methods in R</h1>
+
+<p>Unless you are developing your own R packages with complicated structure, object oriented coding in R is often overlooked.  Not until very recently, I discovered that there are actually situations other than in package development where you want use OO programming in R, or more specifically speaking using S3 methods.</p>
+
+<p>If you aren’t familiar with S3 methods in R, here is a guide by Hadley: <a href="http://adv-r.had.co.nz/OO-essentials.html">OO field guide in Advanced R</a>.</p>
+
+<p>So, let’s cut into the point.</p>
+
+<p>One big challenge in data science is actually organizing and reusing the code across multiple projects. Imaging that you have a general data wrangling procedure that loosely applies to all your projects but with some custom variants.</p>
+
+<p>Obviously one way you can reuse your code is simply by copying and pasting functions or scripts that are relatively generic from one project to another and then refactor accordingly. This is a very quick and effective way to get the job done; however, you will get confused over time with code accumulation and puzzled by the subtle differences in each project. Also if you found a bug in one place, you have to fix it in multiple places, which is quite a pain.</p>
+
+<p>The S3 approach to handle a situation like this is fairly straight forward:</p>
+
+<ol>
+  <li>make an s3 object that defines your project, note that an s3 object is simply list with attributes:</li>
+</ol>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">create_project</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">project_name</span><span class="p">,</span><span class="w"> </span><span class="n">options</span><span class="p">){</span><span class="w">
+    </span><span class="n">project</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">structure</span><span class="p">(</span><span class="w">
+        </span><span class="nf">list</span><span class="p">(</span><span class="w">
+            </span><span class="n">project_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">project_name</span><span class="p">,</span><span class="w">
+            
+            </span><span class="c1"># Note that you can wrap all project </span><span class="w">
+            </span><span class="c1"># specific params into an options list </span><span class="w">
+            </span><span class="c1"># and unpack it later in the S3 methods.</span><span class="w">
+        	</span><span class="n">options</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">options</span><span class="w">
+        </span><span class="p">),</span><span class="w">
+   
+        </span><span class="c1"># class name is simply the project_name, you </span><span class="w">
+        </span><span class="c1"># can also assign additonal parent classes to</span><span class="w">
+        </span><span class="c1"># set up an inheritance structure, which is </span><span class="w">
+        </span><span class="c1"># particularly useful if you have layers of </span><span class="w">
+        </span><span class="c1"># projects that follow one generic procedure</span><span class="w">
+    
+        </span><span class="c1"># E.g., class = c(project_name, "my_project")</span><span class="w">
+        </span><span class="c1"># all projects are also "my_project"</span><span class="w">
+        </span><span class="n">class</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">project_name</span><span class="w">
+    </span><span class="p">)</span><span class="w">
+    </span><span class="nf">return</span><span class="p">(</span><span class="n">project</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<ol>
+  <li>create a generic function that calls project specific s3 methods:</li>
+</ol>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">process_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">){</span><span class="w">
+    </span><span class="nf">UseMethod</span><span class="p">(</span><span class="s2">"process_data"</span><span class="p">,</span><span class="w"> </span><span class="n">obj</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>you may also want a default method that applies to all projects:</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">process_data.default</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">){</span><span class="w">
+    </span><span class="c1"># do something that applies to every project</span><span class="w">
+    </span><span class="nf">return</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>or, if you have a parent class defined in 1, you can also do:</p>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">process_data.my_project</span><span class="w">  </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">){</span><span class="w">
+    </span><span class="c1"># do something that applies to all my project</span><span class="w">
+    </span><span class="nf">return</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<ol>
+  <li>create project specific s3 methods:</li>
+</ol>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># For project alpha</span><span class="w">
+</span><span class="n">process_data.project_alpha</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">){</span><span class="w">
+    </span><span class="c1"># unpack options list from obj</span><span class="w">
+    </span><span class="n">options</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">obj</span><span class="o">$</span><span class="n">options</span><span class="w">
+    </span><span class="n">...</span><span class="w">
+    
+    </span><span class="c1"># do something that applies to project alpha</span><span class="w">
+    </span><span class="n">...</span><span class="w">
+    
+    </span><span class="c1"># either call the default method using </span><span class="w">
+    </span><span class="c1"># NextMethod or simply return the data</span><span class="w">
+    </span><span class="n">NextMethod</span><span class="p">(</span><span class="s2">"process_data"</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># For project beta (same thing)</span><span class="w">
+</span><span class="n">process_data.project_beta</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">){</span><span class="w">
+    </span><span class="c1"># unpack options list from obj</span><span class="w">
+    </span><span class="n">options</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">obj</span><span class="o">$</span><span class="n">options</span><span class="w">
+    </span><span class="n">...</span><span class="w">
+    
+    </span><span class="c1"># do something that applies to project beta</span><span class="w">
+    </span><span class="n">...</span><span class="w">
+    
+    </span><span class="c1"># either call the default method using </span><span class="w">
+    </span><span class="c1"># NextMethod or simply return the data</span><span class="w">
+    </span><span class="n">NextMethod</span><span class="p">(</span><span class="s2">"process_data"</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<ol>
+  <li>then call your wrap up your code in an execution function / script:</li>
+</ol>
+
+<div class="language-R highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">run_data_process</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">options</span><span class="p">,</span><span class="n">data</span><span class="p">){</span><span class="w">
+    
+    </span><span class="n">project</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">create_project</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">options</span><span class="p">)</span><span class="w">
+	</span><span class="n">processed_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">process_data</span><span class="p">(</span><span class="w">
+        </span><span class="n">project</span><span class="p">,</span><span class="w"> 
+        </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="w">
+    </span><span class="p">)</span><span class="w">
+    </span><span class="nf">return</span><span class="p">(</span><span class="n">processed_data</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="c1"># execute!</span><span class="w">
+</span><span class="n">alpha_processed</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">run_data_process</span><span class="p">(</span><span class="w">
+    </span><span class="s2">"alpha"</span><span class="p">,</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"good"</span><span class="p">),</span><span class="w"> 
+    </span><span class="n">alpha_data</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="n">beta_processed</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">run_data_process</span><span class="p">(</span><span class="w">
+    </span><span class="s2">"beta"</span><span class="p">,</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">beta</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"better"</span><span class="p">),</span><span class="w"> 
+    </span><span class="n">beta_data</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>You can see that with the S3 methods, we have the ability to scale our core functions to many projects without worrying about human error or hidden bugs in copy &amp; paste.  And if there’s a bug in the core function, fixing it in one place means all projects are also fixed.</p>
+
+
+
+      </section>
+      <footer>
+        
+        <p>This project is maintained by <a href="http://github.com/fanghaolei">fanghaolei</a></p>
+        
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="/assets/js/scale.fix.js"></script>
+
+
+  
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-108549416-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+  
+  </body>
+</html>
