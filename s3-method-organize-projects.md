@@ -1,6 +1,6 @@
 # Organizing Projects with S3 Methods in R 
 
-Unless you are developing your own R packages with complicated structure, object oriented coding in R is often overlooked.  Not until very recently, I discovered that there are actually situations other than in package development where you want use OO programming in R, or more specifically speaking using S3 methods. 
+Unless you are developing your own R packages with complicated structure, object oriented coding in R is often overlooked.  Not until very recently, I started using OO programming, or more specifically speaking - S3 methods, in situations other than package development. 
 
 If you aren't familiar with S3 methods in R, here is a guide by Hadley: [OO field guide in Advanced R](http://adv-r.had.co.nz/OO-essentials.html).
 
