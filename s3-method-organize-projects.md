@@ -80,7 +80,7 @@ process_data.project_alpha <- function(obj, data){
     
     # either call the default method using 
     # NextMethod or simply return the data
-    NextMethod("process_data", obj)
+    NextMethod("process_data")
 }
 ```
 
@@ -96,7 +96,7 @@ process_data.project_beta <- function(obj, data){
     
     # either call the default method using 
     # NextMethod or simply return the data
-    NextMethod("process_data", obj)
+    NextMethod("process_data")
 }
 ```
 
@@ -104,6 +104,7 @@ process_data.project_beta <- function(obj, data){
 
 ```R
 run_data_process <- function(name, options,data){
+    
     project <- create_project(name, options)
 	processed_data <- process_data(
         project, 
