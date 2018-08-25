@@ -1,6 +1,6 @@
 # Organizing Projects with S3 Methods in R 
 
-Unless you are developing your own R packages with complicated structure, object oriented coding in R is often overlooked.  Not until very recently, I started using OO programming, or more specifically speaking - S3 methods, in situations other than package development. 
+Unless you are developing your own R packages with complicated structures, object oriented programming in R is often overlooked.  Not until very recently, I started using OO programming, or more specifically speaking -- S3 methods, in situations other than package development. 
 
 If you aren't familiar with S3 methods in R, here is a guide by Hadley: [OO field guide in Advanced R](http://adv-r.had.co.nz/OO-essentials.html).
 
@@ -8,7 +8,7 @@ So, let's cut into the point.
 
 One big challenge in data science is actually organizing and reusing the code across multiple projects. Imaging that you have a general data wrangling procedure that loosely applies to all your projects but with some custom variants.
 
-Obviously one way you can reuse your code is simply by copying and pasting functions or scripts that are relatively generic from one project to another and then refactor accordingly. This is a very quick and effective way to get the job done; however, you will get confused over time with code accumulation and puzzled by the subtle differences in each project. Also if you found a bug in one place, you have to fix it in multiple places, which is quite a pain. 
+Obviously, one way to reuse your code is simply by copying and pasting functions or scripts that are relatively generic from one project to another and then refactor accordingly. This is a very quick and effective way to get the job done; however, you will get confused over time with code accumulation and puzzled by the subtle differences in each project. Also if you found a bug in one place, you have to fix it in multiple places, which is quite a pain. 
 
  The S3 approach to handle a situation like this is fairly straight forward:
 
@@ -61,7 +61,7 @@ Obviously one way you can reuse your code is simply by copying and pasting funct
 
    ```R
    process_data.my_project  <- function(obj, data){
-       # do something that applies to all my project
+       # do something that applies to all "my project"
        return(data)
    }
    ```
@@ -100,7 +100,7 @@ Obviously one way you can reuse your code is simply by copying and pasting funct
    }
    ```
 
-4. then call your wrap up your code in an execution function / script:
+4. then wrap up your code in an execution function / script and run:
 
    ```R
    run_data_process <- function(name, options,data){
@@ -126,11 +126,11 @@ Obviously one way you can reuse your code is simply by copying and pasting funct
 
    You can see that with the S3 methods, we have the ability to scale our core functions to many projects with following advantages:
 
-   1. No need to worry about human error or hidden bugs in copy & paste.  
+   1. No more worries about human error or hidden bugs from copy & paste.  
 
    2. Easy bug fixes. If there's a bug in the core generic function, fixing it in one place means all projects are also fixed. 
 
-   3. Flexibility to extend your object with more even more methods. This maximizes your code reusability. 
+   3. Flexibility to extend your object with even more methods. This maximizes your code reusability. 
 
 
 
