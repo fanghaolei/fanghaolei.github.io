@@ -14,117 +14,124 @@ Obviously one way you can reuse your code is simply by copying and pasting funct
 
 1. make an s3 object that defines your project, note that an s3 object is simply list with attributes:
 
-```R
-create_project <- function(project_name, options){
-    project <- structure(
-        list(
-            project_name = project_name,
-            
-            # Note that you can wrap all project 
-            # specific params into an options list 
-            # and unpack it later in the S3 methods.
-        	options = options
-        ),
-   
-        # class name is simply the project_name, you 
-        # can also assign additonal parent classes to
-        # set up an inheritance structure, which is 
-        # particularly useful if you have layers of 
-        # projects that follow one generic procedure
-    
-        # E.g., class = c(project_name, "my_project")
-        # all projects are also "my_project"
-        class = project_name
-    )
-    return(project)
-}
-```
+   ```R
+   create_project <- function(project_name, options){
+       project <- structure(
+           list(
+               project_name = project_name,
+               
+               # Note that you can wrap all project 
+               # specific params into an options list 
+               # and unpack it later in the S3 methods.
+           	options = options
+           ),
+      
+           # class name is simply the project_name, you 
+           # can also assign additonal parent classes to
+           # set up an inheritance structure, which is 
+           # particularly useful if you have layers of 
+           # projects that follow one generic procedure
+       
+           # E.g., class = c(project_name, "my_project")
+           # all projects are also "my_project"
+           class = project_name
+       )
+       return(project)
+   }
+   ```
 
 2. create a generic function that calls project specific s3 methods:
 
-```R
-process_data <- function(obj, data){
-    UseMethod("process_data", obj)
-}
-```
+   ```R
+   process_data <- function(obj, data){
+       UseMethod("process_data", obj)
+   }
+   ```
 
-you may also want a default method that applies to all projects:
+   you may also want a default method that applies to all projects:
 
-```R
-process_data.default <- function(obj, data){
-    # do something that applies to every project
-    return(data)
-}
-```
+   ```R
+   process_data.default <- function(obj, data){
+       # do something that applies to every project
+       return(data)
+   }
+   ```
 
-or, if you have a parent class defined in 1, you can also do:
+   or, if you have a parent class defined in 1, you can also do:
 
-```R
-process_data.my_project  <- function(obj, data){
-    # do something that applies to all my project
-    return(data)
-}
-```
+   ```R
+   process_data.my_project  <- function(obj, data){
+       # do something that applies to all my project
+       return(data)
+   }
+   ```
 
 3. create project specific s3 methods:
 
-```R
-# For project alpha
-process_data.project_alpha <- function(obj, data){
-    # unpack options list from obj
-    options <- obj$options
-    ...
-    
-    # do something that applies to project alpha
-    ...
-    
-    # either call the default method using 
-    # NextMethod or simply return the data
-    NextMethod("process_data")
-}
-```
+   ```R
+   # For project alpha
+   process_data.project_alpha <- function(obj, data){
+       # unpack options list from obj
+       options <- obj$options
+       ...
+       
+       # do something that applies to project alpha
+       ...
+       
+       # either call the default method using 
+       # NextMethod or simply return the data
+       NextMethod("process_data")
+   }
+   ```
 
-```R
-# For project beta (same thing)
-process_data.project_beta <- function(obj, data){
-    # unpack options list from obj
-    options <- obj$options
-    ...
-    
-    # do something that applies to project beta
-    ...
-    
-    # either call the default method using 
-    # NextMethod or simply return the data
-    NextMethod("process_data")
-}
-```
+   ```R
+   # For project beta (same thing)
+   process_data.project_beta <- function(obj, data){
+       # unpack options list from obj
+       options <- obj$options
+       ...
+       
+       # do something that applies to project beta
+       ...
+       
+       # either call the default method using 
+       # NextMethod or simply return the data
+       NextMethod("process_data")
+   }
+   ```
 
 4. then call your wrap up your code in an execution function / script:
 
-```R
-run_data_process <- function(name, options,data){
-    
-    project <- create_project(name, options)
-	processed_data <- process_data(
-        project, 
-        data = data
-    )
-    return(processed_data)
-}
+   ```R
+   run_data_process <- function(name, options,data){
+       
+       project <- create_project(name, options)
+   	processed_data <- process_data(
+           project, 
+           data = data
+       )
+       return(processed_data)
+   }
+   
+   # execute!
+   alpha_processed <- run_data_process(
+       "alpha", list(alpha = "good"), 
+       alpha_data
+   )
+   beta_processed <- run_data_process(
+       "beta", list(beta = "better"), 
+       beta_data
+   )
+   ```
 
-# execute!
-alpha_processed <- run_data_process(
-    "alpha", list(alpha = "good"), 
-    alpha_data
-)
-beta_processed <- run_data_process(
-    "beta", list(beta = "better"), 
-    beta_data
-)
-```
+   You can see that with the S3 methods, we have the ability to scale our core functions to many projects with following advantages:
 
-You can see that with the S3 methods, we have the ability to scale our core functions to many projects without worrying about human error or hidden bugs in copy & paste.  And if there's a bug in the core function, fixing it in one place means all projects are also fixed. 
+   1. No need to worry about human error or hidden bugs in copy & paste.  
+
+   2. Easy bug fixes. If there's a bug in the core generic function, fixing it in one place means all projects are also fixed. 
+
+   3. Flexibility to extend your object with more even more methods. This maximizes your code reusability. 
+
 
 
 
