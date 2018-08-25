@@ -5,6 +5,7 @@ author:
 url: https://fanghaolei.github.io/
 description: Sharing knowledge of data science and programming. 
 google_analytics: UA-108549416-1
+logo: /img/logo.png
 gems:
    - jekyll-mentions
    - jemoji
