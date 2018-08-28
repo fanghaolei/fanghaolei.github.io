@@ -8,7 +8,7 @@ So, let's cut into the point.
 
 One big challenge in data science is actually organizing and reusing the code across multiple projects. Imaging that you have a general data wrangling procedure that loosely applies to all your projects but with some custom variants.
 
-Obviously, one way to reuse your code is simply by copying and pasting functions or scripts that are relatively generic from one project to another and then refactor accordingly. This is a very quick and effective way to get the job done; however, you will get confused over time with code accumulation and puzzled by the subtle differences in each project. Also if you found a bug in one place, you have to fix it in multiple places, which is quite a pain. 
+Obviously, one way to reuse your code is simply by copying and pasting functions or scripts that are relatively generic from one project to another and then refactor accordingly. This is a very quick and effective way to get the job done; however, you will get confused over time with code accumulation and puzzled by the subtle differences in each project. Also if you find a bug in one place, you'll have to fix it in multiple places, which is quite a pain. 
 
  The S3 approach to handle a situation like this is fairly straight forward:
 
