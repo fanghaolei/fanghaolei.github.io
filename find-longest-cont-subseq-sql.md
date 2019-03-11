@@ -12,7 +12,7 @@ The longest continuous subsequence is 2010 - 2017, which is 8 years.
 
 This is a fairly simple problem to solve in any real programming languages with a for loop. For example, in python, you could write something like:
 
-```{python}
+```python
 from typing import List
 
 def find_subseq(seq:List[int]) -> int:
@@ -77,7 +77,7 @@ The trick here is to use the exact 1-year lag that we are trying to identify.  T
 
 Here is the code:
 
-```{sql}
+```sql
 -- A CTE for 1 & 2
 with year_flags as (
 	select 
