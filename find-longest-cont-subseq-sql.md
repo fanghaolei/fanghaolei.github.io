@@ -1,4 +1,4 @@
-# Find the Longest Continuous Subsequence In SQL 
+# Find the Longest Continuous Subsequence with SQL 
 
 I've recently come across an interesting algorithmic problem in work, that is: given a sequence of integers, find the longest continuous subsequence. Here is a concrete example of this problem:
 
