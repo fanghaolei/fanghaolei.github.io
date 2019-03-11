@@ -124,7 +124,7 @@ continue 8
 
 This algorithm can be easily generalized in situations which involves group aggregations too. One can simply add additional fields in the `partition by` and `group by `statements. 
 
-However, this is totally not recommended to be done in pure SQL as it can be solved within minutes with any formal programming languages. This write-up is more of a demonstration piece that SQL can be used to solve a problem that seemingly iterative in nature.
+However, this is totally not recommended to be done in pure SQL as it can be solved within minutes with any formal programming languages. This write-up is more of a demonstration piece that SQL can be used to solve a problem that's seemingly iterative in nature.
 
 
 
