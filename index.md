@@ -4,6 +4,10 @@ title: Welcome
 
 ## Blog articles:
 
+####[Find the Longest Continuous Integer Subsequence with SQL (03/11/19)](find-longest-cont-subseq-sql,md)
+
+I've recently come across an interesting algorithmic problem in work, that is: given a sequence of integers, find the longest continuous subsequence. Here is a concrete example of this problem: […more](find-longest-cont-subseq-sql,md)
+
 #### [Organizing Projects with S3 Methods in R (08/24/18)](s3-method-organize-projects.html)
 Unless you are developing your own R packages with complicated structure, object oriented coding in R is often overlooked.  Not until very recently, I found that there are actually situations other than in package development where you want use OO programming in R, or more specifically speaking using S3 methods.  [...more](s3-method-organize-projects.html)
 
