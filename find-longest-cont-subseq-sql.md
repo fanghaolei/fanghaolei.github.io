@@ -2,7 +2,7 @@
 
 I've recently come across an interesting algorithmic problem in work, that is: given a sequence of integers, find the longest continuous subsequence. Here is a concrete example of this problem:
 
-Assume we have a series of years in the numeric form to be more specific:
+Assume we have a series of years in the numeric form. To be more specific:
 
 `1999, 2000, 2001, 2004, 2005, 2007, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2019`
 
@@ -10,7 +10,7 @@ The longest continuous subsequence is 2010 - 2017, which is 8 years.
 
 ### The iterative solution
 
-This is a fairly simple problem to solve in any real programming languages with a for loop. For example, in python, you could write something like:
+This is a fairly simple problem to solve in any real programming languages with a for loop. For example, in python:
 
 ```python
 from typing import List
